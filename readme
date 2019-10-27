@@ -1,0 +1,18 @@
+kafka installation tutorial
+https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273
+
+
+zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
+
+kafka-server-start /usr/local/etc/kafka/server.properties
+
+
+kafka-console-producer --broker-list localhost:9092 --topic test
+
+kafka-console-consumer --bootstrap-server localhost:9092 --topic test --from-beginning
+
+kafka-console-consumer --bootstrap-server localhost:9092 --topic tp1-topic
+ --from-beginning
+
+API source:
+https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=PRGS&interval=1min&apikey=JWUNO7YKNBXQFLAW
