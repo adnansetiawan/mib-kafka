@@ -21,7 +21,7 @@ namespace KafkaConsumer
                 try
                 {
                     var content = new StringContent(data, Encoding.UTF8, "application/json");
-                    var responseMessage = await client.PostAsync("https://kontes-64ef5.firebaseio.com/.json", content);
+                    var responseMessage = await client.PostAsync("https://kontes-64ef5.firebaseio.com/stocks.json", content);
                 }
                 catch (Exception ex)
                 {
