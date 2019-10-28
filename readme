@@ -5,7 +5,8 @@ https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-
 zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
 2. Running Kafka:
 kafka-server-start /usr/local/etc/kafka/server.properties
-
+3. Running Applikasi Console di project yang bernama Kafka Producer-> mengirim data baru ke kafka
+4. Running Aplikasi Console di project yang bernama Kafka Consumer ->setiap ada data baru di kafka akan dikirim data ke firebase
 
 kode di bawah ini cuman buat testing bikin topic dan subscribe topic di kafka, sudah dihandle di app Kafka Producer yang mengirim data dan kafka Consumer yang subsribe event
 kafka-console-producer --broker-list localhost:9092 --topic test
