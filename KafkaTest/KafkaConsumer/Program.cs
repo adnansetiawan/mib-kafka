@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 
-using Newtonsoft.Json;
 
 namespace KafkaConsumer
 {
@@ -49,9 +46,11 @@ namespace KafkaConsumer
         {
 
             ConsumeWeather();
-
+            ConsumeStock();
         }
-
+        /// <summary>
+        /// subsribe stock topic message event from kafka and send it into firebase realtime db
+        /// </summary>
         private static void ConsumeStock()
         {
             var conf = new ConsumerConfig
@@ -95,6 +94,9 @@ namespace KafkaConsumer
                 }
             }
         }
+        /// <summary>
+        /// subsribe weather topic message event from kafka and send it into firebase realtime db
+        /// </summary>
         private static void ConsumeWeather()
         {
             var conf = new ConsumerConfig

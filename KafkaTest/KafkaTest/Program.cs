@@ -9,6 +9,9 @@ using Newtonsoft.Json.Linq;
 
 namespace KafkaProducer
 {
+    /// <summary>
+    /// payload data for stock
+    /// </summary>
     public class StockPayLoadData
     {
         public DateTime Time { get; set; }
@@ -19,6 +22,9 @@ namespace KafkaProducer
         public double Low { get; set; }
 
     }
+    /// <summary>
+    /// payload data for weather from BMKG
+    /// </summary>
     public class Weather
     {
         public Weather()
@@ -45,6 +51,10 @@ namespace KafkaProducer
 
     class Program
     {
+        /// <summary>
+        /// get data from BMKG open data for Jawa Barat,clean the format and sent it into kafka
+        /// </summary>
+        /// <returns></returns>
         private static async Task UpdateWeather()
         {
             XmlTextReader reader = new XmlTextReader("http://data.bmkg.go.id/datamkg/MEWS/DigitalForecast/DigitalForecast-JawaBarat.xml");
@@ -121,9 +131,10 @@ namespace KafkaProducer
                 }
             }
         }
-        private static async Task SendToKafka(string topicId)
-        {
-        }
+        /// <summary>
+        /// consume stock api data, clean the format and send to kafka
+        /// </summary>
+        /// <returns></returns>
         private static async Task GetStockResponse()
         {
             using (var httpClient = new HttpClient())
@@ -168,7 +179,7 @@ namespace KafkaProducer
                                 await producer.ProduceAsync("mib-topic", new Message<Null, string> { Value = jsonPayload });
                                 producer.Flush(TimeSpan.FromSeconds(10));
 
-
+                                //delay 5s
                                 await Task.Delay(5000);
                             }
                             startData = startData.AddMinutes(1);
@@ -182,7 +193,7 @@ namespace KafkaProducer
 
         static void Main(string[] args)
         {
-            //GetStockResponse().Wait();
+            GetStockResponse().Wait();
             UpdateWeather().Wait();
             Console.ReadLine();
         }
