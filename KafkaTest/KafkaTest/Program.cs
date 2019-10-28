@@ -7,13 +7,29 @@ using Newtonsoft.Json.Linq;
 
 namespace KafkaProducer
 {
+    public class PayLoadData
+    {
+        public DateTime Time { get; set; }
+        public double Open { get; set; }
+        public double High { get; set; }
+        public double Close { get; set; }
+        public double Volume { get; set; }
+        public double Low { get; set; }
+
+    }
     class Program
     {
         private static async Task DeleteTopics(string brokerList, string[] topicNames)
         {
             using (var adminClient = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = brokerList }).Build())
             {
-                await adminClient.DeleteTopicsAsync(topicNames, null);
+                try
+                {
+                    await adminClient.DeleteTopicsAsync(topicNames, null);
+                }
+                catch
+                {
+                }
             }
         }
         private static async Task GetStockResponse()
@@ -38,17 +54,26 @@ namespace KafkaProducer
                         : $"Delivery Error: {r.Error.Reason}");
                     using (var producer = new ProducerBuilder<Null, string>(config).Build())
                     {
-                        await DeleteTopics(config.BootstrapServers, new string[] { "tp1-topic" });
+                        await DeleteTopics(config.BootstrapServers, new string[] { "mib-topic" });
                         while (startData < lastRefreshed)
                         {
                             var key = startData.ToString("yyyy-MM-dd HH:mm:ss");
                             if (dataTimeSeries[key] != null)
                             {
+                                var payload = new PayLoadData
+                                {
+                                    Time = startData,
+                                    Open = dataTimeSeries[key].Value<double>("1. open"),
+                                    High = dataTimeSeries[key].Value<double>("2. high"),
+                                    Low = dataTimeSeries[key].Value<double>("3. low"),
+                                    Close = dataTimeSeries[key].Value<double>("4. close"),
+                                    Volume = dataTimeSeries[key].Value<double>("5. volume")
 
-                                var jsonPayload = JsonConvert.SerializeObject(dataTimeSeries[key].Value<object>());
+                                };
+                                var jsonPayload = JsonConvert.SerializeObject(payload);
                                 Console.WriteLine("send to kafka: ");
                                 Console.WriteLine(jsonPayload);
-                                await producer.ProduceAsync("tp1-topic", new Message<Null, string> { Value = jsonPayload });
+                                await producer.ProduceAsync("mib-topic", new Message<Null, string> { Value = jsonPayload });
                                 producer.Flush(TimeSpan.FromSeconds(10));
 
 
@@ -61,6 +86,8 @@ namespace KafkaProducer
                 }
             }
         }
+
+
         static void Main(string[] args)
         {
             GetStockResponse().Wait();

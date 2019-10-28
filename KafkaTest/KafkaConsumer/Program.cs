@@ -1,28 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
+
+using Newtonsoft.Json;
 
 namespace KafkaConsumer
 {
     class Program
     {
+        public static async Task SendPushNotification(String data)
+        {
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    var content = new StringContent(data, Encoding.UTF8, "application/json");
+                    var responseMessage = await client.PostAsync("https://kontes-64ef5.firebaseio.com/.json", content);
+                }
+                catch (Exception ex)
+                {
+                }
+
+            }
+        }
         static void Main(string[] args)
         {
             var conf = new ConsumerConfig
             {
                 GroupId = "mib",
                 BootstrapServers = "localhost:9092",
-                // Note: The AutoOffsetReset property determines the start offset in the event
-                // there are not yet any committed offsets for the consumer group for the
-                // topic/partitions of interest. By default, offsets are committed
-                // automatically, so in this example, consumption will only start from the
-                // earliest message in the topic 'my-topic' the first time you run the program.
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
             using (var c = new ConsumerBuilder<Ignore, string>(conf).Build())
             {
-                c.Subscribe("tp1-topic");
+                c.Subscribe("mib-topic");
 
                 CancellationTokenSource cts = new CancellationTokenSource();
                 Console.CancelKeyPress += (_, e) =>
@@ -39,6 +57,8 @@ namespace KafkaConsumer
                         {
                             var cr = c.Consume(cts.Token);
                             Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
+                            SendPushNotification(cr.Value).Wait();
+
                         }
                         catch (ConsumeException e)
                         {
