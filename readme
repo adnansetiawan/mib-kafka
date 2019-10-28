@@ -1,12 +1,13 @@
 kafka installation tutorial
 https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273
 
-
+1. Running zookeeper :
 zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
-
+2. Running Kafka:
 kafka-server-start /usr/local/etc/kafka/server.properties
 
 
+kode di bawah ini cuman buat testing bikin topic dan subscribe topic di kafka, sudah dihandle di app Kafka Producer yang mengirim data dan kafka Consumer yang subsribe event
 kafka-console-producer --broker-list localhost:9092 --topic test
 
 kafka-console-consumer --bootstrap-server localhost:9092 --topic test --from-beginning
